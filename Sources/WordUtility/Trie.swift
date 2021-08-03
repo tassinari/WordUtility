@@ -11,7 +11,6 @@ public class  Trie{
     
     private let nodes : [UInt32]
     
-    //FIXME : Caps vs lower needs test
     public init(data : Data){
         var nodeArray = Array<UInt32>(repeating: 0, count: data.count/MemoryLayout<UInt32>.stride)
         _ = nodeArray.withUnsafeMutableBytes { data.copyBytes(to: $0) }
