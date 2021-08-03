@@ -19,12 +19,12 @@ class AnagramTests: XCTestCase {
                 XCTFail("no path to sample words")
                 return
             }
-            let anagrams = try Anagram(withDataURL: url )
-            let perm = try anagrams.anagrams(of: "street")
+            let anagramMaker = try Anagram(withDataURL: url )
+            let anagrams = try anagramMaker.anagrams(of: "street")
             
             let data = try Data(contentsOf: url)
             let trie = Trie(data: data)
-            for word in perm{
+            for word in anagrams{
                 XCTAssert(trie.isWord(word),"found a word not in dict (\(word))")
             }
         }catch{

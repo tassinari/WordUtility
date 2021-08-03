@@ -63,15 +63,15 @@ class TrieTests: XCTestCase {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         do{
+            guard let url =  Bundle.module.url(forResource: "fullDictionary", withExtension: "data") else {
+                XCTFail("no path to sample words")
+                return
+            }
             guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
                 XCTFail("no path to sample words")
                 return
             }
-            let trieMaker = TrieMaker(path: path)
-            guard let data = trieMaker.createData() else{
-                XCTFail("cant create data")
-                return
-            }
+            let data = try Data(contentsOf: url)
             let trie = Trie(data: data)
             let dict = try String(contentsOfFile: path, encoding: .utf8)
             let words : [String] = dict.components(separatedBy: .newlines)
