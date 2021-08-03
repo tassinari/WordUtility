@@ -17,21 +17,73 @@ class TrieTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
+    func testTrieAgainstCapsWord() throws {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
+            XCTFail("no path to sample words")
+            return
+        }
+        let trieMaker = TrieMaker(path: path)
+        guard let data = trieMaker.createData() else{
+            XCTFail("cant create data")
+            return
+        }
+        let trie = Trie(data: data)
+        
+        let words = ["Street","HeLLo","CAPITAL","loweR"]
+        for word in words{
+            XCTAssert(trie.isWord(word),"\(word) not a word")
+        }
 
+    }
+    func testTrieDoesntBlowUpWithWhiteSpaceAndNumerals() throws {
+        // This is an example of a functional test case.
+        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        
+        guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
+            XCTFail("no path to sample words")
+            return
+        }
+        let trieMaker = TrieMaker(path: path)
+        guard let data = trieMaker.createData() else{
+            XCTFail("cant create data")
+            return
+        }
+        let trie = Trie(data: data)
+        
+        let words = ["Stre   et","HeLL2o","2CAPITAL","l1oweR","😁",  "             "]
+        for word in words{
+            XCTAssert(!trie.isWord(word),"\(word) not a word")
+        }
+
+    }
     func testTrieAgainstFullDictionarAndFakeWords() throws {
         // This is an example of a functional test case.
         // Use XCTAssert and related functions to verify your tests produce the correct results.
         do{
-            let data = try Data(contentsOf: URL(fileURLWithPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data"))
+            guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
+                XCTFail("no path to sample words")
+                return
+            }
+            let trieMaker = TrieMaker(path: path)
+            guard let data = trieMaker.createData() else{
+                XCTFail("cant create data")
+                return
+            }
             let trie = Trie(data: data)
-            let dict = try String(contentsOfFile: "/Users/tassinari/Developer/wordLists/words.txt", encoding: .utf8)
+            let dict = try String(contentsOfFile: path, encoding: .utf8)
             let words : [String] = dict.components(separatedBy: .newlines)
             for word in words{
                 XCTAssert(trie.isWord(word),"Error: word: \(word) is returning false")
          
             }
-            
-            let dict2 = try String(contentsOfFile: "/Users/tassinari/Developer/wordLists/fakeWords.txt", encoding: .utf8)
+            guard let nonWordsPath =  Bundle.module.path(forResource: "fakeWords", ofType: "txt") else {
+                XCTFail("no path to sample words")
+                return
+            }
+            let dict2 = try String(contentsOfFile: nonWordsPath, encoding: .utf8)
             let fakewords : [String] = dict2.components(separatedBy: .newlines)
             for fakeword in fakewords{
                 XCTAssertFalse(trie.isWord(fakeword),"Error: word: \(fakeword) is returning true")
@@ -45,17 +97,5 @@ class TrieTests: XCTestCase {
        
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            do{
-                let data = try Data(contentsOf: URL(fileURLWithPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data"))
-                let _ = Trie(data: data)
-               
-            }catch let e {
-                XCTFail("exception : \(e)")
-            }
-        }
-    }
 
 }

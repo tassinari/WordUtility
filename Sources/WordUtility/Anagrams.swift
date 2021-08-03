@@ -18,14 +18,13 @@ public class Anagram{
     private let trie : Trie
     
     
-    //FIXME: change to URL
-    public init(withDataPath path : String ) throws{
-        if !FileManager.default.fileExists(atPath: path){
+    public init(withDataURL url : URL ) throws{
+        if !FileManager.default.fileExists(atPath: url.path){
             throw AnagramError.invalidDataPath
         }
         
         do{
-            let data = try Data(contentsOf: URL(fileURLWithPath: path))
+            let data = try Data(contentsOf: url)
             self.trie = Trie(data: data)
            
         }catch  {

@@ -13,39 +13,49 @@ class AnagramTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    func testAnagramWorks() throws {
+    func testAnagramDoesntIncludeNonWords() throws {
         do{
-            let anagrams = try Anagram(withDataPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data")
+            guard let url =  Bundle.module.url(forResource: "fullDictionary", withExtension: "data") else {
+                XCTFail("no path to sample words")
+                return
+            }
+            let anagrams = try Anagram(withDataURL: url )
             let perm = try anagrams.anagrams(of: "street")
             
-            let data = try Data(contentsOf: URL(fileURLWithPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data"))
+            let data = try Data(contentsOf: url)
             let trie = Trie(data: data)
             for word in perm{
-                print(word)
                 XCTAssert(trie.isWord(word),"found a word not in dict (\(word))")
             }
         }catch{
             XCTFail()
         }
     }
+    func testAnagramProducesAllAnagrams() throws {
+        do{
+            guard let url =  Bundle.module.url(forResource: "fullDictionary", withExtension: "data") else {
+                XCTFail("no path to sample words")
+                return
+            }
+            let ag = try Anagram(withDataURL: url )
+            let anagrams = try ag.anagrams(of: "tough")
+            let expected = ["ought","tough","goth","thug","thou","gout","hout","hog","hug","ugh","hot","hut","got","gut","tog","tug","out", "tho"]
+            XCTAssert(expected.count == anagrams.count, "count off")
+            for word in anagrams{
+                XCTAssert(expected.contains(word), "\(word) not in expected)")
+            }
+           
+        }catch{
+            XCTFail()
+        }
+    }
+    
+    
     func testThatAnagramsThrowsOnBadPath(){
         
 
-
-        XCTAssertThrowsError(try Anagram(withDataPath: "/fake/path.data")) { error in
-            guard let err = error as? AnagramError else {
-                XCTFail("wrong error: \(type(of: error))")
-                return
-            }
-            XCTAssert(err == AnagramError.invalidDataPath ,"wrong type its : \(err)")
-        }
-       
-    }
-    func testThatAnagramsThrowsOnBadFile(){
-        
-
-
-        XCTAssertThrowsError(try Anagram(withDataPath: "/Users/tassinari/Developer/wordLists/empty.data")) { error in
+        let url = URL(fileURLWithPath: "/fake/path")
+        XCTAssertThrowsError(try Anagram(withDataURL: url)) { error in
             guard let err = error as? AnagramError else {
                 XCTFail("wrong error: \(type(of: error))")
                 return
@@ -57,7 +67,11 @@ class AnagramTests: XCTestCase {
     func testThatAnagramsThrowsOnBadWord(){
        
         do{
-            let anagram = try Anagram(withDataPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data")
+            guard let url =  Bundle.module.url(forResource: "fullDictionary", withExtension: "data") else {
+                XCTFail("no path to sample words")
+                return
+            }
+            let anagram = try Anagram(withDataURL: url)
             XCTAssertThrowsError(try anagram.anagrams(of: "sssss")) { error in
                 guard let err = error as? AnagramError else {
                     XCTFail("wrong error: \(type(of: error))")

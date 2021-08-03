@@ -26,15 +26,24 @@ class TrieMakerTests: XCTestCase {
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
-    func testCreateDataWorks() throws {
-        let test = TrieMaker(path: "/Users/tassinari/Developer/wordLists/words.txt")
-        XCTAssert(test.isWord("bat"))
+    func testCreateDataWorksAndCanRecreate() throws {
+        guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
+            XCTFail("no path to sample words")
+            return
+        }
+        let test = TrieMaker(path:path)
         guard let data = test.createData() else{
             XCTFail("bad data")
             return
         }
+        guard let url =  Bundle.module.url(forResource: "fullDictionary", withExtension: "data") else {
+            XCTFail("no path to sample words")
+            return
+        }
+       
         do{
-            try data.write(to: URL(fileURLWithPath: "/Users/tassinari/Developer/wordLists/fullDictionary.data"))
+            let expected = try Data(contentsOf: url)
+            XCTAssert(data == expected)
             let recoveredTree = try test.treeFromData(data)
             XCTAssert(recoveredTree == test.root)
             
@@ -43,11 +52,5 @@ class TrieMakerTests: XCTestCase {
         }
     }
 
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
+  
 }

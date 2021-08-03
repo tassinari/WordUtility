@@ -24,7 +24,11 @@ let package = Package(
             ]),
         .testTarget(
             name: "WordUtilityTests",
-            dependencies: ["WordUtility"]),
+            dependencies: ["WordUtility"],
+            resources: [
+                    .process("Resources")
+                ]
+        )
     ]
 )
 

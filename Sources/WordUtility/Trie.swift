@@ -25,7 +25,7 @@ public class  Trie{
         var childPointer = 0
         
         //move current to end of tree
-        for char in word{
+        for char in word.lowercased(){
             guard let index = indexOf(char: char, parentIndex: childPointer) else {
                 return false
             }
