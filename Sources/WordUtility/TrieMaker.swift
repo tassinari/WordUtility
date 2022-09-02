@@ -155,7 +155,7 @@ private extension UInt32 {
             self  = self | eolMask
         }
         if node.children.count > 0 {
-            self  = self | ( node.offset << 10) & offsetMask
+            self  = self | (( node.offset << 10) & offsetMask)
         }
         
     }

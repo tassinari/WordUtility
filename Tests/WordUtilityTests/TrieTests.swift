@@ -36,7 +36,22 @@ class TrieTests: XCTestCase {
         for word in words{
             XCTAssert(trie.isWord(word),"\(word) not a word")
         }
-
+        
+    }
+    func testAgainstExtraLetterAtEnd(){
+        //noticed an extra s at the end of thaws -> thawss
+        guard let path =  Bundle.module.path(forResource: "fullDictionary", ofType: "txt") else {
+            XCTFail("no path to sample words")
+            return
+        }
+        let trieMaker = TrieMaker(path: path)
+        guard let data = trieMaker.createData() else{
+            XCTFail("cant create data")
+            return
+        }
+        let trie = Trie(data: data)
+        XCTAssertTrue(trie.isWord("thaws"),"thaw is a word")
+        XCTAssertFalse(trie.isWord("thawss"),"thawss not a word")
     }
     func testTrieDoesntBlowUpWithWhiteSpaceAndNumerals() throws {
         // This is an example of a functional test case.

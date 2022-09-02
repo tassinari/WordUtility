@@ -34,7 +34,11 @@ public class  Trie{
         return nodes[childPointer] & wordMask == wordMask
     }
     fileprivate func indexOf(char : Character, parentIndex : Int) -> Int?{
-        var internalIndex = parentIndex + Int(((offsetMask & nodes[parentIndex]) >> 10))
+        let offset = Int(((offsetMask & nodes[parentIndex]) >> 10))
+        if offset == 0 {
+            return nil
+        }
+        var internalIndex = parentIndex + offset
         while (nodes[internalIndex]  & eolMask) != eolMask{
             if Character(UnicodeScalar(UInt8(letterMask & nodes[internalIndex]))) == char {
                 return internalIndex
